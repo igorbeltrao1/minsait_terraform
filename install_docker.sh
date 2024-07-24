@@ -1,64 +1,80 @@
 #!/bin/bash
-##@@@@
-## Scrip cai dat docker, docker-compose tren CentOS 7
-## Cach thuc hien 
-### yum install wget -y
-### wget https://raw.githubusercontent.com/nhanhoadocs/scripts/master/Utilities/install_docker.sh
-### chmod +x install_docker.sh
-### bash install_docker.sh
-##@@@@
+set -e
 
-echo "Cai dat cac pham mem tien ich"
-sleep 3
-yum update -y
-yum install -y yum-utils device-mapper-persistent-data lvm2 wget
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+# Atualizar pacotes e instalar dependências
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
 
-echo "Cai dat container"
-sleep 3
-yum install -y docker-ce docker-ce-cli containerd.io
+# Adicionar chave GPG do Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-echo "Khoi dong docker"
-sleep 3
+# Adicionar repositório Docker
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-systemctl start docker 
-systemctl enable docker 
+# Atualizar novamente e instalar Docker
+sudo apt-get update
+sudo apt-get install -y docker-ce
 
-echo "Phien ban docker da cai dat"
-docker --version
+# Adicionar o usuário atual ao grupo docker
+sudo usermod -aG docker $(whoami)
 
-echo "Cai dat docker-compose"
-sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# Instalar Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-echo "Kiem tra phien ban docker-compose"
-sleep 3
-docker-compose -v
+# Verificar a versão do Docker e Docker Compose
+docker --version
+docker-compose --version
 
-echo "I.A.OK"
+# Criar diretório para o docker-compose.yml
+mkdir -p /home/igorbeltrao/docker
+cd /home/igorbeltrao/docker
 
-# Subir o container do MySQL
-sudo docker run --name mysql \
-  -e MYSQL_ROOT_PASSWORD=root \
-  -e MYSQL_DATABASE=minsaitdatabase \
-  -e MYSQL_USER=igorminsaiter \
-  -e MYSQL_PASSWORD=minsait123 \
-  -p 3306:3306 \
-  -d mysql:5.7
+# Criar o arquivo docker-compose.yml
+cat <<EOF > docker-compose.yml
+version: '3.8'
 
-# Esperar até que o MySQL esteja pronto
-echo "Esperando o MySQL inicializar..."
-until sudo docker exec mysql mysqladmin ping --silent; do
-  sleep 5
-done
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: igorminsaiter
+      WORDPRESS_DB_PASSWORD: minsait123
+      WORDPRESS_DB_NAME: minsaitdatabase
+    depends_on:
+      - mysql
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress-net
 
-# Subir o container do WordPress
-sudo docker run --name wordpress \
-  --link mysql:mysql \
-  -e WORDPRESS_DB_HOST=mysql \
-  -e WORDPRESS_DB_USER=igorminsaiter \
-  -e WORDPRESS_DB_PASSWORD=minsait123 \
-  -e WORDPRESS_DB_NAME=minsaitdatabase \
-  -p 80:80 \
-  -d wordpress
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: minsaitdatabase
+      MYSQL_USER: igorminsaiter
+      MYSQL_PASSWORD: minsait123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - wordpress-net
+
+networks:
+  wordpress-net:
+    driver: bridge
+
+volumes:
+  wordpress_data:
+  mysql_data:
+EOF
+
+# Subir os containers do Docker Compose
+sudo docker-compose up -d

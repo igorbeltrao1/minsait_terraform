@@ -91,9 +91,9 @@ resource "azurerm_linux_virtual_machine" "vm1" {
   network_interface_ids = [azurerm_network_interface.vnic.id]
 
   admin_username                   = "igorbeltrao"
-  disable_password_authentication  = false # Permitir autenticação por senha
+  disable_password_authentication  = false 
 
-  admin_password = "Igor123." # Defina a senha do administrador
+  admin_password = "Igor123."
 
   source_image_reference {
     publisher = "Canonical"
@@ -107,11 +107,12 @@ resource "azurerm_linux_virtual_machine" "vm1" {
     caching              = "ReadWrite"
   }
 
-  custom_data = filebase64("install_docker.sh")
-
+  
   tags = {
     environment = "Terraform"
   }
+  custom_data = filebase64("install_docker.sh")
+
 }
 
 variable "ssh_public_key" {
