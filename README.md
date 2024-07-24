@@ -1,0 +1,1 @@
+# minsait_terraform
