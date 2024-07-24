@@ -24,7 +24,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: GAud4mZby8F3SD6P
       MYSQL_DATABASE: minsaitdatabase
       MYSQL_USER: igorminsaiter
       MYSQL_PASSWORD: minsait123
