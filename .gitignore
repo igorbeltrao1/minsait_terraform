@@ -14,3 +14,5 @@ terraform.tfvars
 *.log
 .DS_Store
 Thumbs.db
+chave.pub
+chave
