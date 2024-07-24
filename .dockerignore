@@ -1,0 +1,27 @@
+# Ignore Terraform files not needed in Docker image
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfplan
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+*.backup
+secrets.auto.tfvars
+*.log
+
+# Ignore git files
+.git
+.gitignore
+
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore Dockerfile itself (optional)
+Dockerfile
+docker-compose.override.yml
