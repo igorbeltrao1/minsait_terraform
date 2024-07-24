@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    ports:
+      - "80:80"
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: igorminsaiter
+      WORDPRESS_DB_PASSWORD: minsait123
+      WORDPRESS_DB_NAME: minsaitdatabase
+    depends_on:
+      - mysql
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - wordpress-net
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: minsaitdatabase
+      MYSQL_USER: igorminsaiter
+      MYSQL_PASSWORD: minsait123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - wordpress-net
+
+networks:
+  wordpress-net:
+    driver: bridge
+
+volumes:
+  wordpress_data:
+  mysql_data:
