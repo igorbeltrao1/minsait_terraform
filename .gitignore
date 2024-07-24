@@ -1,39 +1,16 @@
-# Ignore Terraform state files
+.terraform/
+.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
-
-# Ignore Terraform crash logs
 crash.log
-
-# Ignore Terraform override files
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
-
-# Ignore Terraform plan files
 *.tfplan
-
-# Ignore Terraform provider files
-.terraform/
-.terraform.lock.hcl
-
-# Ignore local environment files
-terraform.tfvars
-
-# Ignore backup files
 *.backup
-
-# Ignore sensitive files
 secrets.auto.tfvars
-
-# Ignore log files
+terraform.tfvars
 *.log
-
-# Ignore Docker-related files
-docker-compose.override.yml
-Dockerfile
-
-# Ignore OS-generated files
 .DS_Store
 Thumbs.db
