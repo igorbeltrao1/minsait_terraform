@@ -1,36 +1,36 @@
 #!/bin/bash
 set -e
 
-# Atualizar pacotes e instalar dependências
+# Atualiza pacotes e instalar dependências
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
 
-# Adicionar chave GPG do Docker
+# Adiciona a chave GPG do Docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-# Adicionar repositório Docker
+# Adiciona repositório Docker
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
-# Atualizar novamente e instalar Docker
+# Atualiza novamente e instalar Docker
 sudo apt-get update
 sudo apt-get install -y docker-ce
 
-# Adicionar o usuário atual ao grupo docker
+# Adiciona o usuário atual ao grupo docker
 sudo usermod -aG docker $(whoami)
 
-# Instalar Docker Compose
+# Instala Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Verificar a versão do Docker e Docker Compose
+# Verifica a versão do Docker e Docker Compose
 docker --version
 docker-compose --version
 
-# Criar diretório para o docker-compose.yml
+# Cria diretório para o docker-compose.yml
 mkdir -p /home/igorbeltrao/docker
 cd /home/igorbeltrao/docker
 
-# Criar o arquivo docker-compose.yml
+# Cria o arquivo docker-compose.yml
 cat <<EOF > docker-compose.yml
 version: '3.8'
 
@@ -76,5 +76,5 @@ volumes:
   mysql_data:
 EOF
 
-# Subir os containers do Docker Compose
+# Sobe os containers do Docker Compose
 sudo docker-compose up -d
